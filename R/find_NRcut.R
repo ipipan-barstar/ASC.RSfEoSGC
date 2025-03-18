@@ -1,7 +1,12 @@
-while (sink.number() > 0) sink(); while (!is.null(dev.list())) dev.off();
 
-source("kmeansWITHweights.R"); source("cut_criteria.R");
 
+while (sink.number() > 0)
+  sink();
+while (!is.null(dev.list()))
+  dev.off();
+
+source("kmeansWITHweights.R");
+source("cut_criteria.R");
 
 cat("
 ################################################################
@@ -11,60 +16,86 @@ cat("
 ");
 
 
-Mprint <- function(M, Mname) { cat("\n Matrix ", Mname, "\n"); print(dim(M))
+Mprint <- function(M, Mname)
+{
+  cat("\n Matrix ", Mname, "\n");
+  print(dim(M))
   diff = 0; for (j in 1:dim(M)[1])
     for (k in 1:dim(M)[2])
-      if (abs(M[j, k] - M[k, j]) > diff) diff = abs(M[j, k] - M[k, j])
+      if (abs(M[j, k] - M[k, j]) > diff)
+        diff = abs(M[j, k] - M[k, j])
   cat("\n assymetry=", diff, "\n");
 
-  flush.console() }
+  flush.console()
+}
 
-mkSYMprint <- function(M, Mname) { cat("\nSymmetrize  Matrix ", Mname, "\n"); print(dim(M))
+mkSYMprint <- function(M, Mname)
+{
+  cat("\nSymmetrize  Matrix ", Mname, "\n");
+  print(dim(M))
   for (j in 1:dim(M)[1])
-    for (k in 1:dim(M)[2]) { s = (M[j, k] + M[k, j]) / 2; M[j, k] = s; M[k, j] = s; }
-  diff = 0; for (j in 1:dim(M)[1])
     for (k in 1:dim(M)[2])
-      if (abs(M[j, k] - M[k, j]) > diff) diff = abs(M[j, k] - M[k, j])
-  cat("\n assymetry=", diff, "\n"); flush.console()
-  return(M) }
+    {
+      s = (M[j, k] + M[k, j]) / 2; M[j, k] = s;
+      M[k, j] = s;
+    }
+  diff = 0;
+  for (j in 1:dim(M)[1])
+    for (k in 1:dim(M)[2])
+      if (abs(M[j, k] - M[k, j]) > diff)
+        diff = abs(M[j, k] - M[k, j])
+  cat("\n assymetry=", diff, "\n");
+  flush.console()
+  return(M)
+}
 
-
-source("wersje_spectral.R");
-
+source("spectral_versions.R");
 cat("\n Saving the data: RES0 and nnn_cats");
+targetDir = paste0(TARGET_DIR_PREFIX, "Results_", substr(nnn.type, 1, 3));
+target.data = cbind(theGROUP = nnn_cats, RES0)
 
-targetDir = paste0(TARGET_DIR_PREFIX, "Wyniki_", substr(nnn.type, 1, 3)); target.data = cbind(theGROUP = nnn_cats, RES0)
-
-if (!dir.exists(targetDir)) { dir.create(targetDir); cat("\nDirectory ", targetDir, "created\n\n"); }
+if (!dir.exists(targetDir))
+{
+  dir.create(targetDir);
+  cat("\nDirectory ", targetDir, "created\n\n");
+}
 
 write.csv(target.data, paste0(targetDir, "/", nnn.type, "_DATA_and_cats.csv"));
-
 flush.console();
 
-
 n = dim(S)[1]
-
 # S diagonal must be 0
-for (j in 1:dim(S)[1]) S[j, j] = 0
+for (j in 1:dim(S)[1])
+  S[j, j] = 0
 
 D = matrix(nrow = n, ncol = n)
 D[,] = 0
-for (j in 1:n) D[j, j] = sum(S[j,])
+for (j in 1:n)
+  D[j, j] = sum(S[j,])
 
 # correction for unrelated elements 
 toRemove = which(diag(D) < 1e-10)
-if (length(toRemove) > 0) { toRetain = which(diag(D) >= 1e-10)
+if (length(toRemove) > 0)
+{
+  toRetain = which(diag(D) >= 1e-10)
   nnn_cats = nnn_cats[toRetain]
   S = S[toRetain, toRetain]
   D = D[toRetain, toRetain]
   RES0 = RES0[toRetain,]
-  cat("\n the following documents were removed:"); print(toRemove);
+  cat("\n the following documents were removed:");
+  print(toRemove);
 
-  n = dim(S)[1] }
+  n = dim(S)[1]
+}
 
 Mprint(D, "D")
 w = diag(D)
-plot(sort(w), main = "Diagonal  elements sorted"); readline(paste("Diagonal sum", sum(w))); plot(sort(w + 1), main = "Diagonal'  elements sorted"); readline(paste("Diagonal sum ", sum(w + 1))); plot(sort(1 / (w + 1)), main = "Diagonal' inverted (F)  elements sorted"); F = sum(1 / (w + 1))
+plot(sort(w), main = "Diagonal  elements sorted");
+readline(paste("Diagonal sum", sum(w)));
+plot(sort(w + 1), main = "Diagonal'  elements sorted");
+readline(paste("Diagonal sum ", sum(w + 1)));
+plot(sort(1 / (w + 1)), main = "Diagonal' inverted (F)  elements sorted");
+F = sum(1 / (w + 1))
 readline(paste("Diagonal inverted sum", sum(F)));
 
 IV = 1:n
@@ -94,8 +125,11 @@ LambdaV = egK$values
 if (length(LambdaV[LambdaV < 0]) < 2)
   LambdaV[LambdaV < 0] = 0
 
-if (IsPNG) png(paste0(targetDir, "/", "EigenvaluesnBbased", nnn.type, ".png")); plot(LambdaV, main = "Eigenvalues B-based", ylab = "eigenvalue")
-if (IsPNG) dev.off()
+if (IsPNG)
+  png(paste0(targetDir, "/", "EigenvaluesnBbased", nnn.type, ".png"));
+plot(LambdaV, main = "Eigenvalues B-based", ylab = "eigenvalue")
+if (IsPNG)
+  dev.off()
 
 mEv = min(LambdaV)
 cat("\nMinimal eigenvalue of B", mEv, "\n")
@@ -113,7 +147,8 @@ sigma = 0; if (mEv < 0) { sigma = -2 * mEv + 1e-10
   egK = eigen(K)
   frLambdaV = LambdaV
   LambdaV = egK$values
-  cat("\nare there negative eigenvalues now?"); print(LambdaV[LambdaV < 0])
+  cat("\nare there negative eigenvalues now?");
+  print(LambdaV[LambdaV < 0])
   mEv = min(LambdaV)
   cat("\nretrial Minimal eigenvalue of K", mEv, "in all", length(LambdaV[LambdaV < 0]), "\n")
   if (length(LambdaV[LambdaV < 0]) < 2)
@@ -130,23 +165,28 @@ l = which(S[i,] > 0.001)[1]
 x_i = sqrt(Lambda) %*% VT[, i]
 x_l = sqrt(Lambda) %*% VT[, l]
 dstil = sum((x_i - x_l)^2)
-cat("\nS[", i, ",", l, "]=", S[i, l]); cat("\nsquared distance in the embedding: ", dstil)
+cat("\nS[", i, ",", l, "]=", S[i, l]);
+cat("\nsquared distance in the embedding: ", dstil)
 cat("\ntrue squared distance              ", DSQ[i, l])
 cat("\nintended squared distance          ", 1 / D[i, i]^2 + 1 / D[l, l]^2 - 2 * S[i, l] / (D[i, i] * D[l, l]))
-if (sigma > 0) { cat("\nsigma corrected squared distance          ", 1 / D[i, i]^2 + 1 / D[l, l]^2 - 2 * S[i, l] / (D[i, i] * D[l, l]) + sigma)
-
+if (sigma > 0)
+{
+  cat("\nsigma corrected squared distance          ", 1 / D[i, i]^2 + 1 / D[l, l]^2 - 2 * S[i, l] / (D[i, i] * D[l, l]) + sigma)
 }
 #supertest 
 if (1 == 0)
   for (i in 1:n)
-    for (l in 1:n) { x_i = sqrt(Lambda) %*% VT[, i]
+    for (l in 1:n)
+    {
+      x_i = sqrt(Lambda) %*% VT[, i]
       x_l = sqrt(Lambda) %*% VT[, l]
       dstil = sum((x_i - x_l)^2)
       DSQil = DSQ[i, l]
       trueV = (D[i, i] + D[l, l] - 2 * S[i, l]) / (D[i, i] * D[l, l])
-      if (abs(dstil - DSQil) > 1e-10) stop(paste("dstil DSQil", i, l)); if (i != l)
-        if (abs(dstil - trueV) > 1e-10) stop(paste("dstil trueV", i, l));
-
+      if (abs(dstil - DSQil) > 1e-10)
+        stop(paste("dstil DSQil", i, l)); if (i != l)
+        if (abs(dstil - trueV) > 1e-10)
+          stop(paste("dstil trueV", i, l));
     }
 
 x_i = sqrt(Lambda) %*% VT[, i]
@@ -155,17 +195,22 @@ sum(abs(x_i - XT[, i]))
 X = t(XT)
 
 trueNoCl = length(table(nnn_cats))
-cat("\nTrue clustering distribution\n"); print(table(nnn_cats))
+cat("\nTrue clustering distribution\n");
+print(table(nnn_cats))
 
 
 Nbased = NormalizedSpectral(S, trueNoCl, unitrow = FALSE)
 clNbased = Nbased$newcls
-cat("\nN-based clustering distribution\n"); print(table(clNbased))
+cat("\nN-based clustering distribution\n");
+print(table(clNbased))
 
 
 L_LambdaV = Nbased$embed$values
-if (IsPNG) png(paste0(targetDir, "/", "EigenvaluesNbased", nnn.type, ".png")); plot(L_LambdaV, main = "Eigenvalues L-based (traditional)", col = "green3", ylab = "eigenvalue")
-if (IsPNG) dev.off()
+if (IsPNG)
+  png(paste0(targetDir, "/", "EigenvaluesNbased", nnn.type, ".png"));
+plot(L_LambdaV, main = "Eigenvalues L-based (traditional)", col = "green3", ylab = "eigenvalue")
+if (IsPNG)
+  dev.off()
 plot(c(L_LambdaV, LambdaV[1]), main = "Eigenvalues B (black) and N(green) -based (traditional)", col = "green3")
 points(LambdaV)
 
@@ -194,13 +239,11 @@ experiment$figex = "NembTrue"
 plotEmbed(clNembed, nnn_cats, "N embedding versus hashtags")
 
 
-# HERE CASE WEIGHTED K-MEANS NEEDED!!!!!!
 fitX = kmeansWITHweights(X[, 1:(trueNoCl + 1)], trueNoCl, nstart = 5, theWeights = diag(D))
 print(table(fitX$cluster))
 clBbased = fitX$cluster
 
 cnd = TRUE
-
 clBembed = X[cnd, 1:trueNoCl]
 experiment$figex = "Bemb"
 plotEmbed(clBembed, clBbased[cnd], "B embedding")
@@ -230,31 +273,48 @@ cat("\nB-based clustering distribution\n"); print(table(clBbased))
 
 
 sink(paste0(targetDir, "/", "normclusterStats", nnn.type, ".txt"))
-cat("\n TRUE NUMBER OF CLUSTERS: ", trueNoCl, "\n"); print(table(nnn_cats))
-cat("B-based clusters\n"); print(table(fitX$cluster))
-cat("N-based clusters\n"); print(table(clNbased))
+cat("\n TRUE NUMBER OF CLUSTERS: ", trueNoCl, "\n");
+print(table(nnn_cats))
+cat("B-based clusters\n");
+print(table(fitX$cluster))
+cat("N-based clusters\n");
+print(table(clNbased))
 
-cat("\n Does N-based GSC imply  our B-based\n"); cmpClusterings(clBbased, clNbased, theComment = " Does N-based GSC imply  our B-based GSC")
-cat("\n Does our B-based method imply N-based GSC  \n"); cmpClusterings(clNbased, clBbased)
+cat("\n Does N-based GSC imply  our B-based\n");
+cmpClusterings(clBbased, clNbased, theComment = " Does N-based GSC imply  our B-based GSC")
+cat("\n Does our B-based method imply N-based GSC  \n");
+cmpClusterings(clNbased, clBbased)
 
-cat("\n Is true clustering implied with our B-based method \n"); cmpClusterings(nnn_cats, clBbased, theComment = "Is true clustering implied with our B-based method", theLabel = "trueB")
+cat("\n Is true clustering implied with our B-based method \n");
+cmpClusterings(nnn_cats, clBbased, theComment = "Is true clustering implied with our B-based method", theLabel = "trueB")
 
-cat("\n Is true clustering  implied  with N-based GSC\n"); cmpClusterings(nnn_cats, clNbased, theComment = "Is true clustering implied with N-based GSC", , theLabel = "trueN")
+cat("\n Is true clustering  implied  with N-based GSC\n");
+cmpClusterings(nnn_cats, clNbased, theComment = "Is true clustering implied with N-based GSC", , theLabel = "trueN")
 
-topwords <- function(RES0, clustering) { for (j in names(table(clustering)))
-  if (sum(clustering == j) > 1) { RES0j = RES0[clustering == j,]
-    wc = c()
-    for (k in 1:dim(RES0j)[2]) { w = sum(RES0j[, k])
-      wc = c(wc, w) }
-    cat("\n Cluster: ", j, "\n"); ix = sort(wc, index.return = TRUE, decreasing = TRUE)
-    print(colnames(RES0)[ix$ix[1:10]]) } }
+topwords <- function(RES0, clustering)
+{
+  for (j in names(table(clustering)))
+    if (sum(clustering == j) > 1)
+    {
+      RES0j = RES0[clustering == j,]
+      wc = c()
+      for (k in 1:dim(RES0j)[2])
+      {
+        w = sum(RES0j[, k])
+        wc = c(wc, w)
+      }
+      cat("\n Cluster: ", j, "\n");
+      ix = sort(wc, index.return = TRUE, decreasing = TRUE)
+      print(colnames(RES0)[ix$ix[1:10]])
+    }
+}
 
-cat("\n True clusters top words \n"); topwords(RES0, nnn_cats)
-
-
-cat("\n N-based clusterings top words \n"); topwords(RES0, clNbased)
-
-cat("\n B-based clusterings top words \n"); topwords(RES0, clBbased)
+cat("\n True clusters top words \n");
+topwords(RES0, nnn_cats)
+cat("\n N-based clusterings top words \n");
+topwords(RES0, clNbased)
+cat("\n B-based clusterings top words \n");
+topwords(RES0, clBbased)
 
 dic = names(table(nnn_cats))
 n_cats = rep(NA, length(nnn_cats))
@@ -267,12 +327,11 @@ cat("\n RNCUt N based ", NRCut(S, clNbased))
 cat("\n NRCUt true  ", NRCut(S, n_cats))
 cat("\n");
 
-
 sink();
-
 print(table(clNbased))
 
-{ prRCut("clNbased", S, clNbased)
+{
+  prRCut("clNbased", S, clNbased)
   prRCut("clBbased", S, clBbased)
   prRCut("true", S, nnn_cats)
 
@@ -290,16 +349,16 @@ print(table(clNbased))
   prNCut("random", S, clrandom)
   prRCut("random", S, clrandom)
 
-  if (n > 700 + 1) { fitXX = kmeansWITHweights(X[, 1:700], trueNoCl, nstart = 5, theWeights = diag(D))
+  if (n > 700 + 1)
+  {
+    fitXX = kmeansWITHweights(X[, 1:700], trueNoCl, nstart = 5, theWeights = diag(D))
     clBbasedX = fitXX$cluster
     print(table(clBbasedX))
-    prNRCut("clBbasedX", S, clBbasedX) }
-
+    prNRCut("clBbasedX", S, clBbasedX)
+  }
 }
 
-
 flush.console();
-
 plot(sort(DSQ), main = "squared distances sorted");
 
 fitXX = kmeansWITHweights(X[, 1:(3 * trueNoCl)], trueNoCl, nstart = 3, theWeights = rep(1, n))
@@ -313,18 +372,5 @@ print(table(clNbased, clBbased))
 # AD MAIOREM DEI GLORIAM #
 ##########################
 
-while (sink.number() > 0) sink();
-
-if (1 == 0) { kk = 1
-  plot(sort(DSQ[n_cats == kk, n_cats == kk]), main = "squared distances sorted"); plot(sort(DSQ[n_cats == kk, n_cats != kk]), main = "squared distances sorted");
-
-  for (kk in 1:4) { S[n_cats == kk, n_cats == kk] = 0.5 + runif(sum(n_cats == kk)^2) * 0.3
-    S[n_cats == kk, n_cats = !kk] = 0.0 + runif(sum(n_cats == kk) * sum(n_cats != kk)) * 0.1
-
-  }
-  S = (S + t(S)) / 2
-
-  S = S - diag(diag(S))
-
-
-}
+while (sink.number() > 0)
+  sink();
