@@ -79,7 +79,7 @@ ClsTXT = ClsTXT[!(ClsTXT %in% clToRemove)]
     else
       st = c(st, jr);
   }
-  print(er);
+  # print(er);
   RES = RES[st,];
   ClsTXT = ClsTXT[st];
   rownames(RES) = c()
@@ -113,67 +113,42 @@ cat("
 Comparison of results of combinatorial spectral clustering with original data: - natural length rows 
 ");
 cmpClusterings(ClsTXT, CombinatorialSpectral(S, trueNoCl, unitrow = FALSE)$newcls);
-readline("0. see the results  and PRESS ENTER");
-cat("processing...\n");
-flush.console();
 
 cat("
 Comparison of results of combinatorial spectral clustering with original data: - unit length rows 
 ");
 cmpClusterings(ClsTXT, CombinatorialSpectral(S, trueNoCl, unitrow = TRUE)$newcls);
-readline("1. see the results  and PRESS ENTER");
-cat("processing...\n");
-flush.console();
 
 cat("
 Comparison of results of combinatorial spectral clustering with original data: - unit length rows and one additional dimension used
 ");
 cmpClusterings(ClsTXT, CombinatorialSpectral(S, trueNoCl + 1, trueNoCl, unitrow = TRUE)$newcls);
-readline("2. see the results  and PRESS ENTER");
-cat("processing...\n"); f
-lush.console();
 
 cat("
 Comparison of results of Kamvar spectral clustering with original data:
 ");
 cmpClusterings(ClsTXT, KamvarSpectral(S, trueNoCl)$newcls);
-readline("3. see the results  and PRESS ENTER");
-cat("processing...\n");
-flush.console();
 
 cat("
 Comparison of results of Kamvar spectral clustering with original data: with additional dimension used 
 ");
 cmpClusterings(ClsTXT, KamvarSpectral(S, trueNoCl + 1, trueNoCl)$newcls);
-readline("4. see the results  and PRESS ENTER"); c
-at("processing...\n");
-flush.console();
 
 
 cat("
 Comparison of results of normalized spectral clustering with original data:
 ");
 cmpClusterings(ClsTXT, NormalizedSpectral(S, trueNoCl)$newcls);
-readline("5. see the results  and PRESS ENTER");
-cat("processing...\n");
-flush.console();
 
 cat("
 Comparison of results of Normalized spectral clustering with original data: - unit length rows 
 ");
 cmpClusterings(ClsTXT, NormalizedSpectral(S, trueNoCl, unitrow = TRUE)$newcls);
-readline("6. see the results  and PRESS ENTER");
-cat("processing...\n");
-flush.console();
 
 cat("
 Comparison of results of Normalized spectral clustering with original data: - unit length rows and one additional dimension used
 ");
 cmpClusterings(ClsTXT, NormalizedSpectral(S, trueNoCl + 1, trueNoCl, unitrow = TRUE)$newcls);
-
-readline("7. see the results  and PRESS ENTER");
-cat("processing...\n");
-flush.console();
 
 cat("
 Comparison of results of Normalized spectral clustering with original data: - unit length rows and one additional dimension used PLUS prior SVD analysis
@@ -181,25 +156,15 @@ Comparison of results of Normalized spectral clustering with original data: - un
 r = 295;
 cmpClusterings(ClsTXT, NormalizedSpectral(similaritySVDapproximation(S, r), trueNoCl + 1, trueNoCl, unitrow = TRUE)$newcls);
 
-readline("8. see the results  and PRESS ENTER"); cat("processing...\n"); flush.console();
-
 cat("
 Comparison of results of Normalized spectral clustering with original data: - unit length rows  PLUS prior SVD analysis
 ");
 r = 295;
 cmpClusterings(ClsTXT, NormalizedSpectral(similaritySVDapproximation(S, r), trueNoCl, unitrow = TRUE)$newcls);
 
-readline("9. see the results  and PRESS ENTER");
-cat("processing...\n");
-flush.console();
-
 nd1o = NormalizedSpectral(S, trueNoCl + 1, trueNoCl, unitrow = TRUE)
 sub = sample(dim(S)[1], round(dim(S)[1] * 0.2))
 nd1sub = NormalizedSpectral(S[sub, sub], trueNoCl + 1, trueNoCl, unitrow = TRUE)
-
-readline("10.see the results  and PRESS ENTER");
-cat("processing...\n");
-flush.console();
 
 cat('
 #############################

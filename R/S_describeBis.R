@@ -64,8 +64,6 @@ for (isPDF in c(FALSE, TRUE))
     lines(c(dst_cum[kk], dst_cum[kk]), lims, col = "green");
 
   }
-  if (!isPDF)
-    readline("see .");
   if (isPDF)
     dev.off()
 }
@@ -98,14 +96,13 @@ aDVtop100 = DVtop100 / 100
 
 plot(sort(aDV), main = "average similarity sorted - \nblack total, green inside blue outside", ylab = "point average similarity", ylim = c(0, max(c(aDV, aDVi, aDVo)))); points(sort(aDVi), col = "green3"); points(sort(aDVo), col = "blue3");
 
-readline("see ."); experiment$figex = "toplowsim"
+
+experiment$figex = "toplowsim"
 for (isPDF in c(FALSE, TRUE)) {
   if (isPDF)
     pdf(paste0(FIG_DIR, experiment$name, "_", experiment$figex, ".pdf"))
   plot(sort(aDVtop100), main = paste0("top/bottom ", topy, " point similarities"), ylim = c(0, max(aDVtop100)));
   points(sort(aDVlow100), col = "blue3");
-  if (!isPDF)
-    readline("see .");
   if (isPDF)
     dev.off()
 }
@@ -116,8 +113,6 @@ for (isPDF in c(FALSE, TRUE))
   if (isPDF)
     pdf(paste0(FIG_DIR, experiment$name, "_", experiment$figex, ".pdf"))
   plot(sort(aDVtop100 - aDVlow100), main = "average difference top bottom mean", ylab = "point similarity 100 span", ylim = c(0, max(c(aDVtop100 - aDVlow100))));
-  if (!isPDF)
-    readline("see .");
   if (isPDF)
     dev.off()
 }

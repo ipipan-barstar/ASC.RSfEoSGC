@@ -154,7 +154,7 @@ RES0 = RES; S = as.matrix(RES[,]) %*% t(as.matrix(RES[,]))
   S = S / Dv;
 }
 
-sink("DATASET_descriptions.txt", append = TRUE)
+sink(paste0(RESULTS_DIR, "DATASET_descriptions.txt"), append = TRUE)
 nrec = length(nnn_cats)
 cardcats = table(nnn_cats)
 ncl = length(cardcats)

@@ -229,8 +229,6 @@ flush.console(); yyy = kmeansWITHweightsQvD(X[,], n_cats, theWeights = diag(D))
 cat("\n Qncut criterion from sum to other cluster  elements", yyy$tot.withinss)
 
 
-readline("\n-----> see");
-
 p = dim(Nbased$embed$vectors)[2]
 clNembed = Nbased$embed$vectors[, p - 1:trueNoCl]
 experiment$figex = "Nemb"

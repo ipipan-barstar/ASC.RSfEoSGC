@@ -47,16 +47,10 @@ cat("Selected ids[", sep = "", TAG_COUNT, "]: ", paste(selection, collapse = " "
 cat("Selected hashtags:", SELECTED_HASHTAGS, '\n')
 cat("Saving results to: ", TARGET_DIR_PREFIX, sep = "", "*\n")
 
-# Function to pause and wait for the user to press Enter
-execute <- function(proc_fname) {
-  fancyline <- "  *********************  "
-  invisible(readline(prompt = cat(fancyline, "Press [Enter] to execute ", proc_fname, fancyline)))
-  source(proc_fname)
-  paste(fancyline, "DONE  ", proc_fname, fancyline) }
 
-execute("TWT_read_exp.R");
-execute("TWT_doc_matrix.R");
-execute("S_describeBis.R");
+source("TWT_read_exp.R");
+source("TWT_doc_matrix.R");
+source("S_describeBis.R");
 
 S_BAK <- S
 nnn_cats_BAK <- nnn_cats
@@ -73,7 +67,7 @@ for (lb in c(0, 0.1, 0.2)) {
     cat("S WITHOUT REDUCTION\n");
   }
   print(table(nnn_cats));
-  execute("find_Rcut.R");
-  execute("find_NRcut.R");
-  execute("NNN_spectral_clusterings.R");
+  source("find_Rcut.R");
+  source("find_NRcut.R");
+  source("NNN_spectral_clusterings.R");
 }
